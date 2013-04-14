@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using nfconlab.Models;
+using System.Web.Security;
 
 namespace nfconlab.Controllers
 {
@@ -32,20 +33,64 @@ namespace nfconlab.Controllers
                 return HttpNotFound();
             }
             return View(questionitem);
+        }                            
+
+        //
+        // POST: /Home/Identify
+        // Segédosztály felhasználó azonosításhoz
+        public class myJSONforUser
+        {
+            public myJSONforUser(string id, string date)
+            {
+                UserID = id;
+                Date = date;
+
+            }
+            public myJSONforUser()
+            {
+                UserID = "Semmi";
+                Date = "1000-01-01";
+            }
+            public string UserID { get; set; }
+            public string Date { get; set; }
+        }
+
+        //Felhasználó azonosítás POST függvény
+        [HttpPost]
+        public string Identify(myJSONforUser json)
+        {
+            //Ha nem null értéket kapott
+            if (json != null)
+            {
+                //Felhasználó eltárolása
+                if(json.UserID.Equals("Semmi"))
+                    return "User identification failed: NOT VALID USER";
+                int id = int.Parse(json.UserID);
+                Session["UserID"] = json.UserID;
+                Session["Date"] = json.Date;
+                //Sikeres azonosítás
+                return "User identification complete";
+            }           
+            //Azonosítási hiba
+            return "User identification failed: NULL JSON";
         }
 
         //
         // GET: /Home/Questions/5
-
+        //Kérdés lekérése REST API-n keresztül
         public string Questions(int id = 0)
         {
+            //Kérdés lekérése az adatbázisból
             QuestionItem questionitem = db.Questions.Find(id);
+            //Azonosító elmentése
+            Session["QuestionID"] = id;
             if (questionitem == null)
             {
                 return "null";
             }
+            //Kimeneti JSON megfelelően formázva
             JsonResult json = new JsonResult();
-            if (questionitem.Image == null) questionitem.Image = "~/Images/noimg.png";
+            if (questionitem.Image == null) questionitem.Image = "http://nfconlab.azurewebsites.net/Images/noimg.png";
             json.Data = "{"
                                 + "\"Date\":\"" + questionitem.Date + "\","
                                 + "\"Question\":\"" + questionitem.Question + "\","
@@ -58,12 +103,74 @@ namespace nfconlab.Controllers
                                 + "},"
                                 + "\"Image\":\"" + questionitem.Image + "\""
                             + "}";
+
             return json.Data.ToString();
         }
 
         //
-        // GET: /Home/Create
+        // POST: /Home/Questions
+        //Segédosztály a válaszadáshoz
+        public class myJSONforAnswer
+        {
+            public myJSONforAnswer(string str)
+            {
+                Answer = str;
+            }
+            public myJSONforAnswer()
+            {
+                Answer = "Semmi";
+            }
+            public string Answer { get; set; }            
+        }
 
+        //Válasz adás POST üzenet
+        [HttpPost]
+        public string Questions(myJSONforAnswer json)
+        {
+            int id = -1;
+            //Ha nem null-t kapott
+            if (json != null)
+            {
+                try
+                {
+                    //Ha a lekért kérdés létezik
+                    id = (int)Session["QuestionID"];
+                }
+                catch
+                {
+                    return "NOT VALID QUESTION";
+                }
+                //Kis formázás a felesleges karakterek eltüntetéséhez
+                string answer = json.Answer.Replace("\"", "");
+                answer = answer.Replace("}", "");
+                answer = answer.Replace("{", "");
+                answer = answer.Replace(" ", "");
+
+                //Helyes válasz vizsgálata
+                QuestionItem questionitem = db.Questions.Find(id);
+                string code="false";
+                if ( questionitem.RightAnswer.Equals(answer))
+                    code = "true";
+                //Következő kérdés, ennek kell visszaadni a pozícióját
+                QuestionItem nextQuestion = db.Questions.Find(id++);
+                string nextPos = "0.0,0.0";
+                if (nextQuestion != null)
+                    nextPos = nextQuestion.Location;
+
+                //Visszaadandó JSON a megfelelő formátumban
+                JsonResult response = new JsonResult();
+                response.Data = "{"
+                                     + "\"Response\":\"" + code + "\","
+                                     + "\"Position\":\"" + nextPos + "\""
+                              + "}";
+                return response.Data.ToString();
+            }          
+            return "NULL JSON";
+        }
+
+        //
+        // GET: /Home/Create
+        [Authorize(Roles = "admin")]
         public ActionResult Create()
         {
             return View();
@@ -87,7 +194,7 @@ namespace nfconlab.Controllers
 
         //
         // GET: /Home/Edit/5
-
+        [Authorize(Roles = "admin")]
         public ActionResult Edit(int id = 0)
         {
             QuestionItem questionitem = db.Questions.Find(id);
@@ -115,7 +222,7 @@ namespace nfconlab.Controllers
 
         //
         // GET: /Home/Delete/5
-
+        [Authorize(Roles = "admin")]
         public ActionResult Delete(int id = 0)
         {
             QuestionItem questionitem = db.Questions.Find(id);

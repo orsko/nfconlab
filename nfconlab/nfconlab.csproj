@@ -183,6 +183,10 @@
     <Compile Include="Migrations\201303311002289_Initial3.Designer.cs">
       <DependentUpon>201303311002289_Initial3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201304141159424_Initial4.cs" />
+    <Compile Include="Migrations\201304141159424_Initial4.Designer.cs">
+      <DependentUpon>201304141159424_Initial4.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\QuestionItem.cs" />
@@ -255,6 +259,7 @@
     <None Include="Properties\PublishProfiles\nfconlab - Web Deploy %284%29.pubxml" />
     <None Include="Properties\PublishProfiles\nfconlab - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.7.1.intellisense.js" />
+    <Content Include="Images\noimg.png" />
     <Content Include="Scripts\jquery-1.7.1.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -333,6 +338,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201303311002289_Initial3.resx">
       <DependentUpon>201303311002289_Initial3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201304141159424_Initial4.resx">
+      <DependentUpon>201304141159424_Initial4.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
