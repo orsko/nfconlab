@@ -19,7 +19,17 @@ namespace nfconlab.Controllers
 
         public ActionResult Index()
         {
-            return View(db.Questions.ToList());
+            if (User.IsInRole("admin"))
+                return View(db.Questions.ToList());
+            else
+            {
+                List<QuestionItem> list= db.Questions.ToList();
+                foreach (var q in list)
+                {
+                    q.RightAnswer = "-----";
+                }
+                return View(list);
+            }
         }
 
         //
@@ -32,7 +42,13 @@ namespace nfconlab.Controllers
             {
                 return HttpNotFound();
             }
-            return View(questionitem);
+            if (User.IsInRole("admin"))
+                return View(questionitem);
+            else{
+                var q = questionitem;
+                q.RightAnswer = "-----";
+                return View(q);
+            }
         }                            
         /*
         //

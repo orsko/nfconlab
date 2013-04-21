@@ -11,7 +11,7 @@ namespace nfconlab.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201304211259112_Initial"; }
+            get { return "201304211459413_Initial"; }
         }
         
         string IMigrationMetadata.Source

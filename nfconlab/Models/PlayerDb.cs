@@ -8,8 +8,6 @@ namespace nfconlab.Models
 {
     public class PlayerDb : DbContext
     {
-        public DbSet<QuestionItem> Questions { get; set; }
-
         public DbSet<Player> Players { get; set; }
     }
 }

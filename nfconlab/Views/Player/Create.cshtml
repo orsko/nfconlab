@@ -14,6 +14,14 @@
         <legend>Player</legend>
 
         <div class="editor-label">
+            @Html.LabelFor(model => model.User_ID)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.User_ID)
+            @Html.ValidationMessageFor(model => model.User_ID)
+        </div>
+
+        <div class="editor-label">
             @Html.LabelFor(model => model.Answered)
         </div>
         <div class="editor-field">

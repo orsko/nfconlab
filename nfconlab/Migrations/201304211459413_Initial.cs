@@ -7,12 +7,10 @@ namespace nfconlab.Migrations
     {
         public override void Up()
         {
-            AddColumn("dbo.Players", "User_ID", c => c.String());
         }
         
         public override void Down()
         {
-            DropColumn("dbo.Players", "User_ID");
         }
     }
 }
