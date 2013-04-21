@@ -34,7 +34,7 @@ namespace nfconlab.Controllers
             }
             return View(questionitem);
         }                            
-
+        /*
         //
         // POST: /Home/Identify
         // Segédosztály felhasználó azonosításhoz
@@ -44,7 +44,6 @@ namespace nfconlab.Controllers
             {
                 UserID = id;
                 Date = date;
-
             }
             public myJSONforUser()
             {
@@ -54,7 +53,7 @@ namespace nfconlab.Controllers
             public string UserID { get; set; }
             public string Date { get; set; }
         }
-
+        
         //Felhasználó azonosítás POST függvény
         [HttpPost]
         public string Identify(myJSONforUser json)
@@ -74,7 +73,7 @@ namespace nfconlab.Controllers
             //Azonosítási hiba
             return "User identification failed: NULL JSON";
         }
-
+        */
         //
         // GET: /Home/Questions/5
         //Kérdés lekérése REST API-n keresztül
@@ -140,17 +139,21 @@ namespace nfconlab.Controllers
                 {
                     return "NOT VALID QUESTION";
                 }
-                //Kis formázás a felesleges karakterek eltüntetéséhez
-                string answer = json.Answer.Replace("\"", "");
-                answer = answer.Replace("}", "");
-                answer = answer.Replace("{", "");
-                answer = answer.Replace(" ", "");
+                //Válasz eltárolása
+                string answer = json.Answer;
 
                 //Helyes válasz vizsgálata
                 QuestionItem questionitem = db.Questions.Find(id);
                 string code="false";
-                if ( questionitem.RightAnswer.Equals(answer))
+                //Ha helyes a válasz
+                if (questionitem.RightAnswer.Equals(answer))
+                {
+                    //Vissza kell adni, hogy jó
                     code = "true";
+                    //Hozzá kell adni a megválaszolt kérdésekhez
+                    var controller = new PlayerController();
+                    controller.AddPoint(questionitem, Session["UserID"]);
+                }
                 //Következő kérdés, ennek kell visszaadni a pozícióját
                 QuestionItem nextQuestion = db.Questions.Find(id++);
                 string nextPos = "0.0,0.0";

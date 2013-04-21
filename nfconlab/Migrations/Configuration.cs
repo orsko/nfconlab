@@ -5,14 +5,14 @@ namespace nfconlab.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<nfconlab.Models.QuestionDb>
+    internal sealed class Configuration : DbMigrationsConfiguration<nfconlab.Models.PlayerDb>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(nfconlab.Models.QuestionDb context)
+        protected override void Seed(nfconlab.Models.PlayerDb context)
         {
             //  This method will be called after migrating to the latest version.
 
